@@ -63,9 +63,9 @@
   (evil-mode 1)
 
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
+  (evil-global-set-key 'motion "k" 'evil-previous-visual-line))
+  ;; (evil-set-initial-state 'messages-buffer-mode 'normal)
+  ;; (evil-set-initial-state 'dashboard-mode 'normal))
 
 (use-package evil-collection
   :after evil
@@ -79,10 +79,26 @@
   :config
   (ivy-mode 1))
 
+(use-package ivy-rich
+  :after ivy
+  :init
+  (ivy-rich-mode 1))
+
 (use-package counsel
   :after ivy
   :config
   (counsel-mode 1))
+
+(use-package helpful
+  :commands (helpful-callable helpful-variable helpful-command helpful-key)
+  :custom
+  (counsel-describe-function-function 'helpful-callable)
+  (counsel-describe-variable-function 'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command]  . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key]      . helpful-key))
 
 (use-package which-key
   :config
@@ -118,26 +134,29 @@
   (dashboard-setup-startup-hook))
 (setq dashboard-center-content t)
 
-(use-package magit)
+(use-package magit
+  :custom
+  (magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1))
 
 (nvmap :prefix ","
-  ","  '(counsel-recentf     :which-key "Recent files")
-  "b"  '(bookmark-bmenu-list :which-key "Bookmark list")
-  "f"  '(find-file           :which-key "Find file")
-  "h"  '(evil-window-left    :which-key "Window left")
-  "j"  '(evil-window-down    :which-key "Window down")
-  "k"  '(evil-window-up      :which-key "Window up")
-  "l"  '(evil-window-right   :which-key "Window right")
-  "n"  '(next-buffer         :which-key "Next buffer")
-  "p"  '(previous-buffer     :which-key "Previous buffer")
-  "q"  '(evil-window-delete  :which-key "Close window")
-  "s"  '(split-window-below  :which-key "Split horizontally")
-  "v"  '(split-window-right  :which-key "Split vertically")
-  "x"  '(counsel-M-x         :which-key "M-x")
+  ","   '(buffer-menu          :which-key "Open buffer menu")
+  "f"   '(find-file            :which-key "Find file")
+  "h"   '(evil-window-left     :which-key "Window left")
+  "j"   '(evil-window-down     :which-key "Window down")
+  "k"   '(evil-window-up       :which-key "Window up")
+  "l"   '(evil-window-right    :which-key "Window right")
+  "n"   '(next-buffer          :which-key "Next buffer")
+  "p"   '(previous-buffer      :which-key "Previous buffer")
+  "q"   '(evil-window-delete   :which-key "Close window")
+  "s"   '(split-window-below   :which-key "Split horizontally")
+  "v"   '(split-window-right   :which-key "Split vertically")
+  "x"   '(counsel-M-x          :which-key "M-x")
 
-  "g s" '(magit-status       :which-key "Show git status")
-  "c c" '(comment-region     :which-key "Comment region")
-  "c u" '(uncomment-region   :which-key "Uncomment region")
+  "b l" '(bookmark-bmenu-list  :which-key "List bookmarks")
+  "b s" '(bookmark-set         :which-key "Set bookmark")
+  "c c" '(comment-region       :which-key "Comment region")
+  "c u" '(uncomment-region     :which-key "Uncomment region")
+  "g s" '(magit-status         :which-key "Show git status")
   )
 
 (custom-set-variables
@@ -146,7 +165,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(magit dashboard general which-key all-the-icons doom-modeline counsel ivy evil use-package)))
+   '(ivy-rich magit dashboard general which-key all-the-icons doom-modeline counsel ivy evil use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
