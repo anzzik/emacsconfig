@@ -7,8 +7,9 @@
 (when window-system (set-frame-size (selected-frame) 100 30))
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-(global-set-key (kbd "C-j") 'enlarge-window)
-(global-set-key (kbd "C-k") 'shrink-window)
+
+(global-set-key (kbd "C-j") 'shrink-window)
+(global-set-key (kbd "C-k") 'enlarge-window)
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
@@ -27,15 +28,12 @@
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
+  (setq evil-toggle-key "C-'")
   :config
   (evil-mode 1)
-  ;; (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  ;; (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
 
-  ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal))
 
@@ -84,18 +82,29 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
+(use-package dashboard
+  :config
+  (dashboard-setup-startup-hook))
+(setq dashboard-center-content t)
+
+(use-package magit)
+
 (nvmap :prefix ","
-  "f"  '(find-file           :which-key "Find file")
   ","  '(counsel-recentf     :which-key "Recent files")
-  "x"  '(counsel-M-x         :which-key "M-x")
+  "b"  '(bookmark-bmenu-list :which-key "Bookmark list")
+  "f"  '(find-file           :which-key "Find file")
+  "h"  '(evil-window-left    :which-key "Window left")
   "j"  '(evil-window-down    :which-key "Window down")
   "k"  '(evil-window-up      :which-key "Window up")
-  "h"  '(evil-window-left    :which-key "Window left")
   "l"  '(evil-window-right   :which-key "Window right")
+  "n"  '(next-buffer         :which-key "Next buffer")
+  "p"  '(previous-buffer     :which-key "Previous buffer")
   "q"  '(evil-window-delete  :which-key "Close window")
   "s"  '(split-window-below  :which-key "Split horizontally")
   "v"  '(split-window-right  :which-key "Split vertically")
-  "b"  '(bookmark-bmenu-list :which-key "Bookmark list")
+  "x"  '(counsel-M-x         :which-key "M-x")
+
+  "g s" '(magit-status      :which-key "Show git status")
   )
 
 (custom-set-variables
@@ -104,7 +113,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(general which-key all-the-icons doom-modeline counsel ivy evil use-package)))
+   '(magit dashboard general which-key all-the-icons doom-modeline counsel ivy evil use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
