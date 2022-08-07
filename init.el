@@ -1,15 +1,45 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
-(global-display-line-numbers-mode)
+(global-display-line-numbers-mode 1)
+(global-visual-line-mode 1)
 
 (setq inhibit-startup-message -1)
 (setq visible-bell t)
 (when window-system (set-frame-size (selected-frame) 100 30))
 
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+;; (set-face-attribute 'default nil
+;;   :font "DejaVu Sans Mono"
+;;   :height 110
+;;   :weight 'medium)
 
+(set-face-attribute 'default nil
+  :font "RobotoMono Nerd Font"
+  :height 110
+  :weight 'medium)
+
+(set-face-attribute 'fixed-pitch nil
+  :font "RobotoMono Nerd Font"
+  :height 110
+  :weight 'medium)
+
+(set-face-attribute 'variable-pitch nil
+  :font "Roboto Condensed"
+  :height 110
+  :weight 'medium)
+
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (global-set-key (kbd "C-j") 'shrink-window)
 (global-set-key (kbd "C-k") 'enlarge-window)
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+(global-set-key (kbd "<C-wheel-up>")   'text-scale-increase)
+(global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
+
+(setq-default c-basic-offset 8
+	      tab-width 8
+	      indent-tabs-mode t)
+
+(setq-default js-indent-level 8)
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
@@ -50,6 +80,7 @@
   (ivy-mode 1))
 
 (use-package counsel
+  :after ivy
   :config
   (counsel-mode 1))
 
@@ -104,7 +135,9 @@
   "v"  '(split-window-right  :which-key "Split vertically")
   "x"  '(counsel-M-x         :which-key "M-x")
 
-  "g s" '(magit-status      :which-key "Show git status")
+  "g s" '(magit-status       :which-key "Show git status")
+  "c c" '(comment-region     :which-key "Comment region")
+  "c u" '(uncomment-region   :which-key "Uncomment region")
   )
 
 (custom-set-variables
