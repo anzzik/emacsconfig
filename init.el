@@ -2,15 +2,16 @@
 (menu-bar-mode -1)
 (global-display-line-numbers-mode 1)
 (global-visual-line-mode 1)
+(put 'dired-find-alternate-file 'disabled nil)
 
 (setq inhibit-startup-message -1)
 (setq visible-bell t)
 (when window-system (set-frame-size (selected-frame) 100 30))
 
-;; (set-face-attribute 'default nil
-;;   :font "DejaVu Sans Mono"
-;;   :height 110
-;;   :weight 'medium)
+;; (defun prefer-horizontal-split ()
+;; (set-variable 'split-height-threshold nil t)
+;; (set-variable 'split-width-threshold 40 t))
+;; (add-hook 'markdown-mode-hook 'prefer-horizontal-split)
 
 (set-face-attribute 'default nil
   :font "RobotoMono Nerd Font"
@@ -30,6 +31,7 @@
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (global-set-key (kbd "C-j") 'shrink-window)
 (global-set-key (kbd "C-k") 'enlarge-window)
+(global-set-key (kbd "C-l") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
 (global-set-key (kbd "<C-wheel-up>")   'text-scale-increase)
@@ -61,11 +63,8 @@
   (setq evil-toggle-key "C-'")
   :config
   (evil-mode 1)
-
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line))
-  ;; (evil-set-initial-state 'messages-buffer-mode 'normal)
-  ;; (evil-set-initial-state 'dashboard-mode 'normal))
 
 (use-package evil-collection
   :after evil
@@ -74,6 +73,11 @@
 
 (use-package all-the-icons
   :if (display-graphic-p))
+
+(use-package all-the-icons-dired
+  :after all-the-icons
+  :config
+  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
 (use-package ivy
   :config
@@ -139,7 +143,7 @@
   (magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1))
 
 (nvmap :prefix ","
-  ","   '(buffer-menu          :which-key "Open buffer menu")
+  ","   '(ibuffer              :which-key "Open buffer list")
   "f"   '(find-file            :which-key "Find file")
   "h"   '(evil-window-left     :which-key "Window left")
   "j"   '(evil-window-down     :which-key "Window down")
@@ -152,9 +156,10 @@
   "v"   '(split-window-right   :which-key "Split vertically")
   "x"   '(counsel-M-x          :which-key "M-x")
 
-  "b l" '(bookmark-bmenu-list  :which-key "List bookmarks")
-  "b s" '(bookmark-set         :which-key "Set bookmark")
   "c c" '(comment-region       :which-key "Comment region")
+  "b l" '(bookmark-bmenu-list  :which-key "List bookmarks")
+  "b r" '(counsel-recentf      :which-key "Open a recent file")
+  "b s" '(bookmark-set         :which-key "Set bookmark")
   "c u" '(uncomment-region     :which-key "Uncomment region")
   "g s" '(magit-status         :which-key "Show git status")
   )
@@ -165,7 +170,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(ivy-rich magit dashboard general which-key all-the-icons doom-modeline counsel ivy evil use-package)))
+   '(doom-themes helpful all-the-icons-dired ivy-rich magit dashboard general which-key all-the-icons doom-modeline counsel ivy evil-collection evil use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
