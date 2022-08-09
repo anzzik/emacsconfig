@@ -8,6 +8,9 @@
 (setq visible-bell t)
 (when window-system (set-frame-size (selected-frame) 100 30))
 
+(add-hook 'c-mode-common-hook
+	  (lambda () (modify-syntax-entry ?_ "w")))
+
 ;; (defun prefer-horizontal-split ()
 ;; (set-variable 'split-height-threshold nil t)
 ;; (set-variable 'split-width-threshold 40 t))
@@ -24,7 +27,7 @@
   :weight 'medium)
 
 (set-face-attribute 'variable-pitch nil
-  :font "Roboto Condensed"
+  :font "Cantarell"
   :height 110
   :weight 'medium)
 
@@ -41,10 +44,18 @@
 	      tab-width 8
 	      indent-tabs-mode t)
 
+(setq c-default-style
+      '((java-mode . "java")
+	(other . "linux")))
+
 (setq-default js-indent-level 8)
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+;; (add-to-list 'package-archives '(("melpa" . "https://melpa.org/packages/")
+;; 				 ("org" . "https://orgmode.org/elpa/")))
+
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+;; (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
 (package-initialize)
 
 (unless package-archive-contents
@@ -61,6 +72,7 @@
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-toggle-key "C-'")
+  ;;(setq evil-symbol-word-search t) ; not needed if syntax-entry is modified
   :config
   (evil-mode 1)
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
@@ -120,7 +132,7 @@
   :config
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+	doom-themes-enable-italic t) ; if nil, italics is universally disabled
   (load-theme 'doom-one t)
 
   ;; Enable flashing mode-line on errors
@@ -142,7 +154,70 @@
   :custom
   (magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1))
 
-(nvmap :prefix ","
+(defun ak/org-mode-font-setup ()
+  (dolist (face '((org-level-1 . 1.2)
+		  (org-level-2 . 1.1)
+		  (org-level-3 . 1.05)
+		  (org-level-4 . 1.0)
+		  (org-level-5 . 1.1)
+		  (org-level-6 . 1.1)
+		  (org-level-7 . 1.1)
+		  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil
+			:weight 'regular
+			:height (cdr face)))
+
+  (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
+  (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
+  (set-face-attribute 'line-number nil   :inherit 'fixed-pitch)
+  (set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch))
+
+(defun ak/org-mode-setup ()
+  (org-indent-mode)
+  (variable-pitch-mode 1)
+  (auto-fill-mode 0)
+  (visual-line-mode 1))
+
+(use-package org
+  :hook
+  (org-mode . ak/org-mode-setup)
+  :config
+  (setq org-ellipsis " ▾")
+  (ak/org-mode-font-setup))
+
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+(defun ak/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :hook (org-mode . ak/org-mode-visual-fill))
+
+(use-package no-littering)
+
+;; no-littering doesn't set this by default so we must place
+;; auto save files in the same path as it uses for sessions
+(setq auto-save-file-name-transforms
+      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+
+(nvmap
+  "TAB" '(evil-indent         :which-key "Show git status")
+  )
+
+(nvmap
+  :prefix ","
   ","   '(ibuffer              :which-key "Open buffer list")
   "f"   '(find-file            :which-key "Find file")
   "h"   '(evil-window-left     :which-key "Window left")
@@ -170,7 +245,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(doom-themes helpful all-the-icons-dired ivy-rich magit dashboard general which-key all-the-icons doom-modeline counsel ivy evil-collection evil use-package)))
+   '(no-littering visual-fill-column org-ac doom-themes helpful all-the-icons-dired ivy-rich magit dashboard general which-key all-the-icons doom-modeline counsel ivy evil-collection evil use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
